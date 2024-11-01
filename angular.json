@@ -82,7 +82,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "/assets"
             ],
             "styles": [
               "src/styles.css"

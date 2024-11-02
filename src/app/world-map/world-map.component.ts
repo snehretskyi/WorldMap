@@ -12,6 +12,7 @@ import {DragBehavior, ZoomBehavior} from 'd3';
 export class WorldMapComponent {
 
   ngAfterViewInit() {
+    const body = d3.select('body');
     const svg = d3.select('svg');
     const mapGroup = d3.select('g#mapGroup');
 
@@ -23,8 +24,9 @@ export class WorldMapComponent {
 
     // Define the zoom behavior
     const zoom: ZoomBehavior<any, any> = d3.zoom()
-      .scaleExtent([1, 3])
+      .scaleExtent([1, 10])
       .on('zoom', (event) => {
+        console.log(event.transform);
         // Apply the zoom transform to the map group
         mapGroup.attr('transform', event.transform);
       });
@@ -35,17 +37,21 @@ export class WorldMapComponent {
         mapGroup.attr('transform', event.transform);
       });
 
-    // Apply zoom behavior to the SVG
-    svg.call(zoom, drag);
+    body.call(zoom, drag);
 
-    svg.on('wheel', (event) => {
+    body.on('wheel', (event) => {
       // Prevent the default behavior of the wheel event (like scrolling the page)
       event.preventDefault();
       event.stopPropagation();
       svg.call(zoom);
     });
 
-
+    mapGroup.selectAll('g')
+      .on('mouseover', (event: MouseEvent, d: any) => {
+        d3.select((event.currentTarget as HTMLElement)).selectAll('path').attr('stroke', 'red').attr("stroke-width", 2);
+      }).on('mouseout', (event: MouseEvent, d: any) => {
+      d3.select((event.currentTarget as HTMLElement)).selectAll('path').attr('stroke', 'black').attr("stroke-width", 0.2);
+    });
   }
 
 

@@ -93,30 +93,10 @@ export class WorldMapComponent {
         const color = political[country.attr('id')] || d3.interpolateRainbow(Math.random());
         country.selectAll('path').attr('fill', color);
 
-        const bbox = country.node().getBBox();
-        if (bbox.width * bbox.height > 100) {
-          const path = this.getLargestPath(country);
-          if (path) {
-            const centroid = path.getPointAtLength(path.getTotalLength() / 2);
-
-            country.append('text')
-              .attr('class', 'country-label')
-              .attr('x', centroid.x)
-              .attr('y', centroid.y)
-              .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'middle')
-              .style('font-size', '10px')
-              .style('pointer-events', 'none')
-              .text(names[country.attr('id')] || country.attr('id'));
-          }
-        }
       });
     } else if (this.currentMode == "continents") {
       const continentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
       const countries = this.mapGroup.selectAll('g');
-
-      // First remove all existing labels
-      this.mapGroup.selectAll('.country-label').remove();
 
       countries.each((d:any, i:number, nodes:any) => {
         const country = d3.select(nodes[i]);
@@ -125,22 +105,6 @@ export class WorldMapComponent {
         country.selectAll('path').attr('fill', color);
 
         const bbox = country.node().getBBox();
-        if (bbox.width * bbox.height > 100) {
-          const path = this.getLargestPath(country);
-          if (path) {
-            const centroid = path.getPointAtLength(path.getTotalLength() / 2);
-
-            country.append('text')
-              .attr('class', 'country-label')
-              .attr('x', centroid.x)
-              .attr('y', centroid.y)
-              .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'middle')
-              .style('font-size', '10px')
-              .style('pointer-events', 'none')
-              .text(names[country.attr('id')] || country.attr('id'));
-          }
-        }
       });
     } else {
       this.mapGroup.selectAll('g').selectAll('path').attr('fill', 'white');

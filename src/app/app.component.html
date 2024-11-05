@@ -1,1 +1,2 @@
-<app-world-map></app-world-map>
+<app-world-map [currentMode]="mapMode"></app-world-map>
+<app-map-mode (selectedModeChange)="changeMode($event)"></app-map-mode>

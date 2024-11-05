@@ -1,0 +1,6 @@
+<div class="controls">
+  <select [(ngModel)]="selectedMode" (change)="changeMode()">
+    <option [ngValue]="'political'" selected>political</option>
+    <option [ngValue]="'continents'">continents</option>
+  </select>
+</div>

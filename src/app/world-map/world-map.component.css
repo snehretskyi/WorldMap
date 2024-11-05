@@ -1,7 +1,14 @@
 svg {
   overflow: visible;
+  min-width: 100vw;
+  min-height: 100vh;
 }
 
 path {
   transition: 0.5s ease-in-out;
+}
+
+.country-label {
+  font-size: 0.5em;
+  fill: black;
 }

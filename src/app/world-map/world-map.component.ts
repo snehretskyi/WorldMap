@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import {DragBehavior, ZoomBehavior} from 'd3';
 import {names, political} from '../data/political';
 import {continents} from '../data/continents';
+import {WorldBankService} from '../services/world-bank.service';
 
 @Component({
   selector: 'app-world-map',
@@ -18,6 +19,9 @@ export class WorldMapComponent {
   @Input() currentMode:string = 'political';
   private mapGroup:any;
   private svg:any;
+
+  public constructor(private worldBankService: WorldBankService) {
+  }
 
   ngAfterViewInit() {
     // finding elements only AFTER the view has been initialized
@@ -82,33 +86,109 @@ export class WorldMapComponent {
   }
 
   changeColor() {
-    if (this.currentMode == "political") {
-      const countries = this.mapGroup.selectAll('g');
+    const countries = this.mapGroup.selectAll('g');
 
-      // First remove all existing labels
-      this.mapGroup.selectAll('.country-label').remove();
+    switch (this.currentMode) {
+      case "political": {
 
-      countries.each((d:any, i:number, nodes:any) => {
-        const country = d3.select(nodes[i]);
-        const color = political[country.attr('id')] || d3.interpolateRainbow(Math.random());
-        country.selectAll('path').attr('fill', color);
+        // First remove all existing labels
+        this.mapGroup.selectAll('.country-label').remove();
 
-      });
-    } else if (this.currentMode == "continents") {
-      const continentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
-      const countries = this.mapGroup.selectAll('g');
+        countries.each((d:any, i:number, nodes:any) => {
+          const country = d3.select(nodes[i]);
+          const color = political[country.attr('id')] || d3.interpolateRainbow(Math.random());
+          country.selectAll('path').attr('fill', color);
 
-      countries.each((d:any, i:number, nodes:any) => {
-        const country = d3.select(nodes[i]);
-        const continent = continents[country.attr('id')];
-        const color = continentColorScale(continent);
-        country.selectAll('path').attr('fill', color);
+        });
 
-        const bbox = country.node().getBBox();
-      });
-    } else {
-      this.mapGroup.selectAll('g').selectAll('path').attr('fill', 'white');
-      this.mapGroup.selectAll('.country-label').remove();
+        break;
+      } case "continents": {
+        const continentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+        countries.each((d:any, i:number, nodes:any) => {
+          const country = d3.select(nodes[i]);
+          const continent = continents[country.attr('id')];
+          const color = continentColorScale(continent);
+          country.selectAll('path').attr('fill', color);
+
+          const bbox = country.node().getBBox();
+        });
+
+        break;
+      } case "gdp": {
+        this.worldBankService.getGdp().subscribe((data:any) => {
+          const gdpDataArray = data[1];
+          const gdpData = gdpDataArray.reduce((acc:any, item:any) => {
+            acc[item.country.id] = item.value;
+            return acc;
+          }, {});
+
+          const gdpCategories = [
+            { threshold: 1e9, color: '#FF0000' },      // Very Low (Red)
+            { threshold: 50e9, color: '#FF4500' },      // Low (Orange-Red)
+            { threshold: 1e10, color: '#FF8C00' },      // Lower-Middle (Orange)
+            { threshold: 5e10, color: '#FFA500' },     // Middle-Low (Dark Orange)
+            { threshold: 1e11, color: '#FFD700' },     // Middle (Gold)
+            { threshold: 5e11, color: '#FFFF00' },     // Upper-Middle (Yellow)
+            { threshold: 20e11, color: '#37ff00' },     // Very High (Lime Green)
+            { threshold: Infinity, color: '#006400' }  // Extremely High (Dark Green) // Highest (Darkest Green)
+          ];
+
+          const gdpValues:number[] | undefined = Object.values(gdpData);
+
+          console.log(gdpValues)
+
+          console.log([Math.log(d3.min(gdpValues)!), Math.log(d3.max(gdpValues)!)])
+
+          countries.each((d:any, i:number, nodes:any) => {
+            const country = d3.select(nodes[i]);
+            const countryId = country.attr('id');
+            const gdp = gdpData[countryId];
+            const color = gdp
+              ? gdpCategories.find(category => gdp < category.threshold)?.color!
+              : '#ccc';
+           country.selectAll('path').attr('fill', color);
+          });
+        });
+        break;
+      }case "gdpPerCapita": {
+        this.worldBankService.getGdpPerCapita().subscribe((data: any) => {
+          const gdpDataArray = data[1];
+          const gdpData = gdpDataArray.reduce((acc: any, item: any) => {
+            acc[item.country.id] = item.value;
+            return acc;
+          }, {});
+
+          const gdpPerCapitaCategories = [
+            {threshold: 1000, color: '#FF0000'},      // Very Low (Red)
+            {threshold: 5000, color: '#FF4500'},      // Low (Orange-Red)
+            {threshold: 10000, color: '#ff8d00'},      // Lower-Middle (Orange)
+            {threshold: 15000, color: '#ffd500'},     // Middle-Low (Dark Orange)
+            {threshold: 20000, color: '#eeff00'},     // Middle (Gold)
+            {threshold: 30000, color: '#d0ff00'},     // Upper-Middle (Yellow)
+            {threshold: 40000, color: '#37ff00'},
+            {threshold: 70000, color: '#1a8000'},  // Very High (Lime Green)
+            {threshold: Infinity, color: '#003e00'}  // Extremely High (Dark Green) // Highest (Darkest Green)
+          ];
+
+          const gdpPerCapitaValues: number[] | undefined = Object.values(gdpData);
+
+          countries.each((d: any, i: number, nodes: any) => {
+            const country = d3.select(nodes[i]);
+            const countryId = country.attr('id');
+            const gdp = gdpData[countryId];
+            const color = gdp
+              ? gdpPerCapitaCategories.find(category => gdp < category.threshold)?.color!
+              : '#ccc';
+            country.selectAll('path').attr('fill', color);
+          });
+        });
+        break;
+      } default: {
+        this.mapGroup.selectAll('g').selectAll('path').attr('fill', 'white');
+        this.mapGroup.selectAll('.country-label').remove();
+        break
+      }
     }
   }
 

@@ -2,5 +2,7 @@
   <select [(ngModel)]="selectedMode" (change)="changeMode()">
     <option [ngValue]="'political'" selected>political</option>
     <option [ngValue]="'continents'">continents</option>
+    <option [ngValue]="'gdp'">GDP</option>
+    <option [ngValue]="'gdpPerCapita'">GDP (Per Capita)</option>
   </select>
 </div>

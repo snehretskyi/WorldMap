@@ -17,6 +17,14 @@ export class WorldBankService {
     return this.http.get(`https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?format=json&date=2023&per_page=300`).pipe(catchError(this.handleError));
   }
 
+  getGdpPerCapitaPpp():Observable<Object> {
+    return this.http.get(`https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.PP.CD?format=json&date=2023&per_page=300`).pipe(catchError(this.handleError));
+  }
+
+  getPopulation():Observable<Object> {
+    return this.http.get(`https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&date=2023&per_page=300`).pipe(catchError(this.handleError));
+  }
+
   handleError(error: HttpErrorResponse) {
     console.error('WorldBank API error');
     return throwError(() => new Error('WorldBank API error'));

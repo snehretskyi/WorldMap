@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MapModeService } from './map-mode.service';
+import { MapColorService } from './map-color.service';
 
-describe('MapModeService', () => {
-  let service: MapModeService;
+describe('MapColorService', () => {
+  let service: MapColorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(MapModeService);
+    service = TestBed.inject(MapColorService);
   });
 
   it('should be created', () => {

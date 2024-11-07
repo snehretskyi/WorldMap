@@ -169,6 +169,92 @@ export class WorldMapComponent {
         ];
         callback = this.worldBankService.getPopulation();
         break;
+      } case "gdpGrowth": {
+        categories = [
+          { threshold: 0, color: '#FF0000' },       // Negative Growth (Red)
+          { threshold: 1, color: '#FF4500' },       // Low Growth (Orange-Red)
+          { threshold: 2, color: '#FF8C00' },       // Moderate Growth (Orange)
+          { threshold: 3, color: '#FFD700' },       // Good Growth (Gold)
+          { threshold: 4, color: '#FFFF00' },       // High Growth (Yellow)
+          { threshold: 5, color: '#ADFF2F' },       // Very High Growth (Yellow-Green)
+          { threshold: Infinity, color: '#7FFF00' } // Extremely High Growth (Lime)
+        ];
+        callback = this.worldBankService.getGdpGrowth();
+        break;
+      } case "gdpPppGrowth": {
+        categories = [
+          { threshold: 0, color: '#FF0000' },       // Negative Growth (Red)
+          { threshold: 1, color: '#FF4500' },       // Low Growth (Orange-Red)
+          { threshold: 2, color: '#FF8C00' },       // Moderate Growth (Orange)
+          { threshold: 3, color: '#FFD700' },       // Good Growth (Gold)
+          { threshold: 4, color: '#FFFF00' },       // High Growth (Yellow)
+          { threshold: 5, color: '#ADFF2F' },       // Very High Growth (Yellow-Green)
+          { threshold: Infinity, color: '#7FFF00' } // Extremely High Growth (Lime)
+        ];
+        callback = this.worldBankService.getGdpPppGrowth();
+        break;
+      } case "inflation": {
+        categories = [
+          { threshold: 0, color: '#7FFF00' },       // Low Inflation (Lime)
+          { threshold: 2, color: '#ADFF2F' },       // Moderate Inflation (Yellow-Green)
+          { threshold: 4, color: '#FFFF00' },       // High Inflation (Yellow)
+          { threshold: 6, color: '#FFD700' },       // Very High Inflation (Gold)
+          { threshold: 8, color: '#FF8C00' },       // Extremely High Inflation (Orange)
+          { threshold: 10, color: '#FF4500' },      // Hyperinflation (Orange-Red)
+          { threshold: Infinity, color: '#FF0000' } // Severe Hyperinflation (Red)
+        ];
+        callback = this.worldBankService.getInflation();
+        break;
+      } case "unemployment": {
+        categories = [
+          { threshold: 2, color: '#7FFF00' },       // Very Low (Lime)
+          { threshold: 4, color: '#ADFF2F' },       // Low (Yellow-Green)
+          { threshold: 6, color: '#FFFF00' },       // Moderate (Yellow)
+          { threshold: 8, color: '#FFD700' },       // High (Gold)
+          { threshold: 10, color: '#FF8C00' },      // Very High (Orange)
+          { threshold: 12, color: '#FF4500' },      // Extremely High (Orange-Red)
+          { threshold: Infinity, color: '#FF0000' } // Severe (Red)
+        ];
+        callback = this.worldBankService.getUnemployment();
+        break;
+      } case "migration": {
+        categories = [
+          { threshold: -1000000, color: '#FF0000' }, // Very High Emigration (Red)
+          { threshold: -500000, color: '#FF4500' },  // High Emigration (Orange-Red)
+          { threshold: -100000, color: '#FF8C00' },  // Moderate Emigration (Orange)
+          { threshold: 0, color: '#FFD700' },        // Low Emigration (Gold)
+          { threshold: 100000, color: '#FFFF00' },   // Low Immigration (Yellow)
+          { threshold: 500000, color: '#ADFF2F' },   // Moderate Immigration (Yellow-Green)
+          { threshold: 1000000, color: '#7FFF00' },  // High Immigration (Lime)
+          { threshold: Infinity, color: '#32CD32' }  // Very High Immigration (Green)
+        ];
+        callback = this.worldBankService.getMigration();
+        break;
+      } case "fertility": {
+        categories = [
+          { threshold: 1, color: '#FF0000' },       // Very Low (Red)
+          { threshold: 1.5, color: '#FF4500' },     // Low (Orange-Red)
+          { threshold: 2, color: '#FF8C00' },       // Moderate (Orange)
+          { threshold: 3, color: '#FFD700' },       // High (Gold)
+          { threshold: 4, color: '#ADFF2F' },       // Very High (Yellow-Green)
+          { threshold: 5, color: '#7FFF00' },       // Extremely High (Lime)
+          { threshold: 6, color: '#32CD32' },       // Maximum (Green)
+          { threshold: Infinity, color: '#006400' } // Maximum (Dark Green)
+        ];
+        callback = this.worldBankService.getFertility();
+        break;
+      } case "populationDensity": {
+        categories = [
+          { threshold: 5, color: '#FF0000' },      // Very Low (Red)
+          { threshold: 20, color: '#FF8C00' },     // Low (Orange-Red)
+          { threshold: 100, color: '#FFD700' },    // Moderate (Gold)
+          { threshold: 250, color: '#a8ea22' },    // High (Yellow-Green)
+          { threshold: 500, color: '#57EC01' },    // Very High (Bright Green)
+          { threshold: 1000, color: '#32CD32' },   // Extremely High (Lime Green)
+          { threshold: Infinity, color: '#006400' } // Maximum (Dark Green)
+        ];
+        callback = this.worldBankService.getPopulationDensity();
+        break;
       } default: {
         this.mapGroup.selectAll('g').selectAll('path').attr('fill', 'white');
         this.mapGroup.selectAll('.country-label').remove();

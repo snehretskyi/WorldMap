@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, ViewEncapsulation} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, Output, ViewEncapsulation} from '@angular/core';
 import * as d3 from 'd3';
 import {BaseType, DragBehavior, ZoomBehavior} from 'd3';
 import {names, political} from '../data/political';
@@ -7,6 +7,8 @@ import {WorldBankService} from '../services/world-bank.service';
 import {MapColorService} from '../services/map-color.service';
 import {Categories} from '../models/categories';
 import {Observable} from 'rxjs';
+import {MapService} from '../services/map.service';
+import {CountryData} from '../models/country-data';
 
 @Component({
   selector: 'app-world-map',
@@ -18,14 +20,15 @@ import {Observable} from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class WorldMapComponent {
-
   @Input() currentMode:string = 'political';
   private mapGroup:any;
   private svg:any;
   private countries:any;
+  private data?:CountryData;
 
   public constructor(private worldBankService: WorldBankService,
-                     private mapColorService: MapColorService) {
+                     private mapColorService: MapColorService,
+                     private mapServiceService: MapService) {
   }
 
   ngAfterViewInit() {
@@ -62,34 +65,33 @@ export class WorldMapComponent {
 
     this.mapGroup.selectAll('g')
       .on('mouseover', (event: MouseEvent, d: any) => {
-        d3.select((event.currentTarget as HTMLElement)).selectAll('path').attr('stroke', 'red').attr("stroke-width", 2);
+        const country = d3.select((event.currentTarget as HTMLElement));
+        const countryIndicatorValue:unknown = this.mapColorService.getCountryDataByID(country.attr('id'));
+
+        // check if there is a data to display
+        if (countryIndicatorValue) {
+          this.data = {
+            name: this.mapServiceService.idToName(country.attr('id')),
+            value: this.mapColorService.getCountryDataByID(country.attr('id'))
+          };
+        } else {
+          this.data = {
+            name: this.mapServiceService.idToName(country.attr('id'))
+          }
+        }
+        this.mapServiceService.setHoveredCountryData(this.data);
+        country.selectAll('path').attr('stroke', 'red').attr("stroke-width", 2);
       }).on('mouseout', (event: MouseEvent, d: any) => {
       d3.select((event.currentTarget as HTMLElement)).selectAll('path').attr('stroke', 'black').attr("stroke-width", 0.2);
+      // cleaning up after mouseout
+      const data = null;
+      this.mapServiceService.setHoveredCountryData(data);
     });
-  }
-
-  private getLargestPath(country: d3.Selection<any, any, any, any>): SVGPathElement | null {
-    let largestArea = 0;
-    let largestPath: SVGPathElement | null = null;
-
-    country.selectAll('path').each(function() {
-      const path = this as SVGPathElement;
-      const bounds = path.getBBox();
-      const area = bounds.width * bounds.height;
-
-      if (area > largestArea) {
-        largestArea = area;
-        largestPath = path;
-      }
-    });
-
-    return largestPath;
   }
 
   changeColor() {
     let categories:Categories[] = [];
     let callback:Observable<any>;
-
     switch (this.currentMode) {
       case "political": {
         this.countries.each((d:any, i:number, nodes:any) => {
@@ -99,6 +101,7 @@ export class WorldMapComponent {
 
         });
 
+        this.mapColorService.purgeCountryData();
         return;
       } case "continents": {
         const continentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -111,6 +114,8 @@ export class WorldMapComponent {
 
           const bbox = country.node().getBBox();
         });
+
+        this.mapColorService.purgeCountryData();
 
         return;
       } case "gdp": {

@@ -1,2 +1,3 @@
-<app-world-map [currentMode]="mapMode"></app-world-map>
+<app-world-map (mousemove)="updateTooltip()" [currentMode]="mapMode"></app-world-map>
 <app-map-mode (selectedModeChange)="changeMode($event)"></app-map-mode>
+<app-tooltip [countryData]="hoveredCountryData"></app-tooltip>

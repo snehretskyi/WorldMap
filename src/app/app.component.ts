@@ -27,6 +27,5 @@ export class AppComponent {
 
   updateTooltip() {
    this.hoveredCountryData = this.mapService.getHoveredCountryData();
-   console.log(this.hoveredCountryData)
   }
 }

@@ -1,9 +1,15 @@
-svg {
-  overflow: visible;
-  min-width: 100vw;
+#worldMap {
+  width: 100vw;
+  height: auto;
   min-height: 100vh;
+  object-fit: contain;
 }
 
+#worldMap svg {
+  width: 100%;
+  min-height: 100vh;
+  height: auto;
+}
 path {
   transition: 0.5s ease-in-out;
 }

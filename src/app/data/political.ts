@@ -260,6 +260,7 @@ export const names : { [key: string]: string } = {
   "ER": "Eritrea",
   "EE": "Estonia",
   "SZ": "Eswatini",
+  "SE": "Sweden",
   "ET": "Ethiopia",
   "FK": "Falkland Islands (the) [Malvinas]",
   "FO": "Faroe Islands",

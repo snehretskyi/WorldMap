@@ -1,0 +1,17 @@
+<div *ngIf="categories" class="legend-container">
+  <div *ngFor="let category of categories.categories; let i = index" class="legend-item">
+    <span class="legend-color" [style.background-color]="category.color"></span>
+    <span class="legend-label">
+      <ng-container *ngIf="category.threshold !== Infinity; else maxThreshold">
+        <ng-container *ngIf="i === 0">
+          < {{ category.threshold | formatLegendEntry }}{{categories.unit}}
+        </ng-container>
+        <ng-container *ngIf="i > 0">
+          {{ categories.categories[i - 1].threshold | formatLegendEntry }}{{categories.unit}}
+          - {{ category.threshold | formatLegendEntry }}{{categories.unit}}
+        </ng-container>
+      </ng-container>
+      <ng-template #maxThreshold> > {{ categories.categories[i - 1].threshold | formatLegendEntry }}{{categories.unit}}</ng-template>
+    </span>
+  </div>
+</div>

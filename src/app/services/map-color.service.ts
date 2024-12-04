@@ -4,6 +4,7 @@ import {WorldBankService} from './world-bank.service';
 import {Categories} from '../models/categories';
 import {Observable} from 'rxjs';
 import {MapService} from './map.service';
+import {CategoriesGroup} from '../models/categories-group';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class MapColorService {
               private mapService:MapService) { }
 
   // apply provided color categories based on the data returned via api
-  applyColor(mapModeFn:Observable<any>, categories:Categories[], countries:any) {
+  applyColor(mapModeFn: Observable<any>, categoriesGroup: CategoriesGroup | undefined, countries: any) {
     mapModeFn.subscribe((data:any) => {
       const dataArray = data[1];
       this.countryData = dataArray.reduce((acc:any, item:any) => {
@@ -31,7 +32,7 @@ export class MapColorService {
         const countryId = country.attr('id');
         const indicator = this.countryData[countryId];
         const color = indicator
-          ? categories.find(category => indicator < category.threshold)?.color!
+          ? categoriesGroup?.categories.find(category => indicator < category.threshold)?.color!
           : '#ccc';
         country.selectAll('path').attr('fill', color);
       });

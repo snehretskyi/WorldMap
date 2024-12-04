@@ -1,0 +1,13 @@
+.legend-container {
+  position: absolute;
+  z-index: 3;
+  left: 10px;
+  bottom: 10px;
+  background-color: #ffffff;
+}
+
+.legend-color  {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
